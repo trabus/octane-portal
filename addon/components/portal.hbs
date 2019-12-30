@@ -1,0 +1,6 @@
+<div {{portal this.guid this namespace=@namespace}}>
+  {{!-- for details on -in-element see: https://github.com/cibernox/rfcs/blob/20d2c89a11d20b7672291569efa2aa6e1697e2fe/text/0000-promote-in-element-to-public-api.md --}}
+  {{#-in-element this.targetElement}}
+    {{yield this}}
+  {{/-in-element}}
+</div>

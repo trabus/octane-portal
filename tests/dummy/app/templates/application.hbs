@@ -1,3 +1,16 @@
 <h2 id="title">Welcome to Ember</h2>
 
 {{outlet}}
+<button type="button" {{portal-open "test"}}>open</button>
+<Portal @id="test">
+  test content
+  <button type="button" {{portal-close "test"}}>close</button>
+</Portal>
+<div {{portal-target}}></div>
+
+<button type="button" {{portal-open "foo" namespace="test"}}>open</button>
+<Portal @id="foo" @namespace="test">foo
+  <button type="button" {{portal-close "foo" namespace="test"}}>close</button>
+</Portal>
+<div {{portal-target namespace="test"}}></div>
+{{!-- be careful not to put `portal-target` inside a Portal!, they get de-rendered and won't come back --}}

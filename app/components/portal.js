@@ -1,0 +1,1 @@
+export { default } from 'octane-portal/components/portal';
