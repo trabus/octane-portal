@@ -2,9 +2,9 @@
 import Service from '@ember/service';
 import { action } from '@ember/object';
 import { assert } from '@ember/debug';
-// import developerLog from 'octane-modal/utils/developer-log';
+const warn = console.warn.bind(console);
 function developerLog(message) {
-  console.warn(message);
+  warn(message);
 }
 
 /**
@@ -23,15 +23,26 @@ export default class PortalService extends Service {
     // maps of portals by id, by namespace
     this._portals = new Map();
   }
+
+  /**
+   * Get the target namespace, using default if not defined
+   * @param {String} namespace 
+   */
   @action
   getNamespace(namespace) {
     return typeof namespace !== 'undefined' ? namespace : 'default';
   }
+
+  /**
+   * Get target for the namespace
+   * @param {String} namespace 
+   */
   @action
   getTarget(namespace) {
     const key = this.getNamespace(namespace);
     return this._targets.get(key);
   }
+
   /**
    * Open a specific modal-dialog that has registered with modal service
    * @param {String} id
@@ -44,24 +55,29 @@ export default class PortalService extends Service {
     const targetElement = this._targets.get(key);
     // open 
     if (item && !item.canOpen) {
-      developerLog(`The modal-dialog ${id} could not be opened, its canOpen property is false.`);
+      developerLog(`The portal ${id} could not be opened, its canOpen property is false.`);
+      return false;
+    }
+    if (item && item.isOpen) {
+      developerLog(`The portal ${id} is already open.`);
       return false;
     }
     item && item.open();
     if (!targetElement) {
-      developerLog(`The modal-dialog ${id} could not be opened, there is no targetElement to render into. Please add a \`<ModalTarget />\` element somewhere where it is rendered at the same time as the intended modal. To ensure a target is always present, use the \`application.hbs\` for modals invoked through the service.`)
+      developerLog(`The portal ${id} could not be opened, there is no targetElement to render into. Please add a \`{{portal-target}}\` element modifier somewhere where it is rendered at the same time as the intended modal. To ensure a target is always present, use the \`application.hbs\` for portals invoked through the service.`)
     }
     if (!item) {
       if (typeof id !== 'string') {
-        developerLog('The modal service `openModal` action requires a string id to look up a currently registered modal instance. Please check that an id is passed as a string.');
+        developerLog('The portal service `open` action requires a string id to look up a currently registered portal instance. Please check that an id is passed as a string.');
       } else {
-        developerLog(`The modal-dialog ${id} does not exist or has not registered with the modal service. Please check to see if the modal is currently rendered in the current route or parent(s).`);
+        developerLog(`The portal ${id} does not exist or has not registered with the portal service. Please check to see if the portal is currently rendered in the current route or parent(s).`);
       }
     }
   }
+
   /**
-   * Close a specific modal-dialog by id
-   * If the id === "all", any open modals will be closed
+   * Close a specific portal by id
+   * If the id === "all", any open portals will be closed
    * @param {String} id 
    */
   @action
@@ -69,8 +85,7 @@ export default class PortalService extends Service {
     const key = this.getNamespace(namespace);
     if (id && this.isRegistered(id, key)) {
       const item = this._portals.get(key).get(id);
-      item.close();
-      console.log('item close')
+      item.isOpen && item.close();
     // close all registered modals
     } else if (id === 'all') {
       this._registry.forEach((i) => {
@@ -91,9 +106,9 @@ export default class PortalService extends Service {
   }
 
   /**
-   * Registers a modal-dialog instance by id
+   * Registers a portal instance by id
    * @param {String} id 
-   * @param {ModalDialog} item 
+   * @param {Portal} item 
    */
   @action
   registerPortal(id, item, namespace) {
@@ -107,7 +122,7 @@ export default class PortalService extends Service {
   }
 
   /**
-   * Unregisters a modal-dialog instance by id
+   * Unregisters a portal instance by id
    * @param {String} id 
    */
   @action
@@ -118,12 +133,21 @@ export default class PortalService extends Service {
     }
   }
 
+  /**
+   * Register a target with the defined namespace
+   * @param {Element} element 
+   * @param {String} namespace 
+   */
   @action
   registerTarget(element, { namespace }) {
     const key = this.getNamespace(namespace);
     this._targets.set(key, element);
   }
 
+  /**
+   * Unregisters a target with the defined namespace
+   * @param {String} namespace 
+   */
   @action
   unregisterTarget({ namespace }) {
     const key = this.getNamespace(namespace);

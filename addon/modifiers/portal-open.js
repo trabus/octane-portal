@@ -1,13 +1,21 @@
 import Modifier from 'ember-modifier';
 import { inject as service } from '@ember/service';
 
-export default class ModalOpenModifier extends Modifier {
+/**
+ * Sets up an event to close the target portal on
+ */
+export default class PortalOpenModifier extends Modifier {
   @service portal;
 
+  /**
+   * track event and handler
+   */
   event = null;
   handler = null;
 
-  // methods for reuse
+  /**
+   * Setup event listener
+   */
   addEventListener() {
     const [ id ] = this.args.positional;
     const { event, namespace } = this.args.named;
@@ -18,6 +26,9 @@ export default class ModalOpenModifier extends Modifier {
     this.element.addEventListener(this.event, this.handler);
   }
 
+  /**
+   * Teardown event listener
+   */
   removeEventListener() {
     let { event, handler } = this;
     if (event && handler) {
@@ -28,7 +39,9 @@ export default class ModalOpenModifier extends Modifier {
     }
   }
 
-  // lifecycle hooks
+  /**
+   * if portal is defined, setup listener
+   */
   didReceiveArguments() {
     const [ portal ] = this.args.positional;
     if (typeof portal === 'undefined') {
@@ -38,6 +51,9 @@ export default class ModalOpenModifier extends Modifier {
     this.addEventListener();
   }
 
+  /**
+   * remove event listner
+   */
   willRemove() {
     this.removeEventListener();
   }
