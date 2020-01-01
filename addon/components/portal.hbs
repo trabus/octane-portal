@@ -1,5 +1,5 @@
-<div {{portal this.guid this namespace=@namespace}}>
+<portal-content name={{this.guid}} target={{this.target}} {{portal this.guid this target=@target}}>
   {{#-in-element this.targetElement}}
     {{yield this}}
   {{/-in-element}}
-</div>
+</portal-content>

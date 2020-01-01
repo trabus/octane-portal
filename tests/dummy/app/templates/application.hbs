@@ -1,16 +1,39 @@
 <h2 id="title">Welcome to Ember</h2>
 
 {{outlet}}
-<button type="button" {{portal-open "test"}}>open</button>
-<Portal @id="test">
-  test content
-  <button type="button" {{portal-close "test"}}>close</button>
+<button type="button" {{portal-open "one"}}>open one</button>
+<Portal @id="one">
+  <div>
+    one
+    <button type="button" {{portal-close "one"}}>close</button>
+  </div>
+</Portal>
+
+<button type="button" {{portal-open "two"}}>open two</button>
+<Portal @id="two">
+  <div>
+    two
+    <button type="button" {{portal-close "two"}}>close</button>
+  </div>
+</Portal>
+<button type="button" {{portal-open "three"}}>open three</button>
+<Portal @id="three">
+  <div>
+    three
+    <button type="button" {{portal-close "three"}}>close</button>
+  </div>
 </Portal>
 <div {{portal-target}}></div>
 
-<button type="button" {{portal-open "foo" namespace="test"}}>open</button>
-<Portal @id="foo" @namespace="test">foo
-  <button type="button" {{portal-close "foo" namespace="test"}}>close</button>
+<button type="button" {{portal-open "foo" target="test"}}>open</button>
+<Portal @id="foo" @target="test">foo
+  <button type="button" {{portal-close "foo" target="test"}}>close</button>
 </Portal>
-<div {{portal-target namespace="test"}}></div>
+<div {{portal-target name="test"}}></div>
 {{!-- be careful not to put `portal-target` inside a Portal!, they get de-rendered and won't come back --}}
+
+<div {{portal-auto-open "alert"}}></div>
+<Portal @id="alert" as |portal|>
+  You have an important task to complete, so we opened this portal on render!
+  <button type="button" {{portal-close portal.guid}}>complete</button>
+</Portal>

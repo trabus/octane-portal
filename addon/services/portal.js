@@ -25,21 +25,21 @@ export default class PortalService extends Service {
   }
 
   /**
-   * Get the target namespace, using default if not defined
-   * @param {String} namespace 
+   * Get the target name, using default if not defined
+   * @param {String} target 
    */
   @action
-  getNamespace(namespace) {
-    return typeof namespace !== 'undefined' ? namespace : 'default';
+  getTargetName(target) {
+    return typeof target !== 'undefined' ? target : 'default';
   }
 
   /**
    * Get target for the namespace
-   * @param {String} namespace 
+   * @param {String} target 
    */
   @action
-  getTarget(namespace) {
-    const key = this.getNamespace(namespace);
+  getTarget(target) {
+    const key = this.getTargetName(target);
     return this._targets.get(key);
   }
 
@@ -48,8 +48,9 @@ export default class PortalService extends Service {
    * @param {String} id
    */
   @action
-  open(id, { namespace }) {
-    const key = this.getNamespace(namespace);
+  open(id, options = {}) {
+    const { target } = options;
+    const key = this.getTargetName(target);
     // get modal-dialog instance from registry
     const item = this._portals.get(key).get(id);
     const targetElement = this._targets.get(key);
@@ -81,8 +82,9 @@ export default class PortalService extends Service {
    * @param {String} id 
    */
   @action
-  close(id, { namespace }) {
-    const key = this.getNamespace(namespace);
+  close(id, options = {}) {
+    const { target } = options;
+    const key = this.getTargetName(target);
     if (id && this.isRegistered(id, key)) {
       const item = this._portals.get(key).get(id);
       item.isOpen && item.close();
@@ -101,18 +103,19 @@ export default class PortalService extends Service {
    * @param {String} id 
    */
   @action
-  isRegistered(id, namespace) {
-    return this._portals.get(namespace).has(id);
+  isRegistered(id, target) {
+    return this._portals.get(target).has(id);
   }
 
   /**
    * Registers a portal instance by id
    * @param {String} id 
    * @param {Portal} item 
+   * @param {String} target
    */
   @action
-  registerPortal(id, item, namespace) {
-    const key = this.getNamespace(namespace);
+  registerPortal(id, item, target) {
+    const key = this.getTargetName(target);
     // if namespace doesn't exist, create one
     if (!this._portals.has(key)) this._portals.set(key, new Map());
     let portal = this._portals.get(key)
@@ -126,8 +129,8 @@ export default class PortalService extends Service {
    * @param {String} id 
    */
   @action
-  unregisterPortal(id, namespace) {
-    const key = this.getNamespace(namespace);
+  unregisterPortal(id, target) {
+    const key = this.getTargetName(target);
     if (this.isRegistered(id, key)) {
       this._portals.get(key).delete(id);
     }
@@ -139,8 +142,8 @@ export default class PortalService extends Service {
    * @param {String} namespace 
    */
   @action
-  registerTarget(element, { namespace }) {
-    const key = this.getNamespace(namespace);
+  registerTarget(element, { name }) {
+    const key = this.getTargetName(name);
     this._targets.set(key, element);
   }
 
@@ -149,8 +152,8 @@ export default class PortalService extends Service {
    * @param {String} namespace 
    */
   @action
-  unregisterTarget({ namespace }) {
-    const key = this.getNamespace(namespace);
+  unregisterTarget({ name }) {
+    const key = this.getTargetName(name);
     if (this._targets.has(key)) {
       this._targets.delete(key);
     }

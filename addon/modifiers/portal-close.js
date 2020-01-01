@@ -8,7 +8,7 @@ export default class PortalCloseModifier extends Modifier {
   @service portal;
 
   /**
-   * track even and handler
+   * track event and handler
    */
   event = null;
   handler = null;
@@ -18,13 +18,13 @@ export default class PortalCloseModifier extends Modifier {
    */
   addEventListener() {
     const [ portal ] = this.args.positional;
-    const { event, namespace } = this.args.named;
+    const { event, target } = this.args.named;
 
     // modal can either be the string id or a modal-dialog instance
     const id = typeof portal === 'string' ? portal : portal.guid;
     // Store the current event and handler for when we need to remove them
     this.event = typeof event !== 'undefined' ? event : 'click';
-    this.handler = () => this.portal.close(id, { namespace });
+    this.handler = () => this.portal.close(id, { target });
 
     this.element.addEventListener(this.event, this.handler);
   }

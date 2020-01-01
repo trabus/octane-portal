@@ -37,6 +37,9 @@ export default class PortalComponent extends Component {
     return this.args.id || 'portal-' + guidFor(this);
   }
 
+  get target() {
+    return this.args.target || 'default';
+  }
   /**
    * boolean determining if portal can open
    */
@@ -78,7 +81,7 @@ export default class PortalComponent extends Component {
     if (this.args.onOpen) {
       this.args.onOpen();
     }
-    let namespace = this.args.namespace;
-    this.targetElement = this.portal.getTarget(namespace);
+    let target = this.args.target;
+    this.targetElement = this.portal.getTarget(target);
   }
 }

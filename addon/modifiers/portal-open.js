@@ -18,10 +18,10 @@ export default class PortalOpenModifier extends Modifier {
    */
   addEventListener() {
     const [ id ] = this.args.positional;
-    const { event, namespace } = this.args.named;
+    const { event, target } = this.args.named;
     // Store the current event and handler for when we need to remove them
     this.event = typeof event !== 'undefined' ? event : 'click';
-    this.handler = () => this.portal.open(id, { namespace });
+    this.handler = () => this.portal.open(id, { target });
 
     this.element.addEventListener(this.event, this.handler);
   }
