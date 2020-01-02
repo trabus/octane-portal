@@ -19,11 +19,6 @@ export default class PortalComponent extends Component {
    * open state
    */
   @tracked isOpen = false;
-
-  /**
-   * target element to render into using `{{-in-element}}`
-   */
-  @tracked targetElement = null;
   
   /**
    * portal close duration, allows for animation to complete
@@ -36,10 +31,21 @@ export default class PortalComponent extends Component {
   get guid() {
     return this.args.id || 'portal-' + guidFor(this);
   }
-
+  
+  /**
+   * portal target
+   */
   get target() {
     return this.args.target || 'default';
   }
+
+  /**
+   * target element to render into using `{{-in-element}}`
+   */
+  get targetElement() {
+    return this.isOpen ? this.portal.getTargetElement(this.target) : null;
+  }
+
   /**
    * boolean determining if portal can open
    */
@@ -61,9 +67,8 @@ export default class PortalComponent extends Component {
    */
   @action
   close() {
-    this.isOpen=false;
     later(this, function () {
-      this.targetElement = null;
+      this.isOpen=false;
       if (this.args.onClose) {
         this.args.onClose();
       }
@@ -81,7 +86,5 @@ export default class PortalComponent extends Component {
     if (this.args.onOpen) {
       this.args.onOpen();
     }
-    let target = this.args.target;
-    this.targetElement = this.portal.getTarget(target);
   }
 }

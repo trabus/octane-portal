@@ -1,6 +1,8 @@
 <h2 id="title">Welcome to Ember</h2>
 
 {{outlet}}
+<button type="button" {{on "click" (fn this.changeTarget "foo")}}>target foo</button>
+<button type="button" {{on "click" (fn this.changeTarget "bar")}}>target bar</button>
 <button type="button" {{portal-open "one"}}>open one</button>
 <Portal @id="one">
   <div>
@@ -29,11 +31,18 @@
 <Portal @id="foo" @target="test">foo
   <button type="button" {{portal-close "foo" target="test"}}>close</button>
 </Portal>
-<div {{portal-target name="test"}}></div>
 {{!-- be careful not to put `portal-target` inside a Portal!, they get de-rendered and won't come back --}}
+<button type="button" {{portal-open "bar" target=this.portalTarget}}>open bar portal</button>
+<Portal @id="bar" @target={{this.portalTarget}}>bar portal has a dynamic target of {{this.portalTarget}}
+  <button type="button" {{portal-close "bar" target=this.portalTarget}}>close</button>
+</Portal>
 
 <div {{portal-auto-open "alert"}}></div>
 <Portal @id="alert" as |portal|>
   You have an important task to complete, so we opened this portal on render!
   <button type="button" {{portal-close portal.guid}}>complete</button>
 </Portal>
+
+<div {{portal-target name="test"}}></div>
+<div name="foo" {{portal-target name="foo"}} class="outline-blue">Foo target</div>
+<div name="bar" {{portal-target name="bar"}} class="outline-red">Bar target</div>

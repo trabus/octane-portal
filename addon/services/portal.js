@@ -38,7 +38,7 @@ export default class PortalService extends Service {
    * @param {String} target 
    */
   @action
-  getTarget(target) {
+  getTargetElement(target) {
     const key = this.getTargetName(target);
     return this._targets.get(key);
   }
